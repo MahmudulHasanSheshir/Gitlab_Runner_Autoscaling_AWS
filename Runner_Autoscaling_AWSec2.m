@@ -1,0 +1,2 @@
+# Overview:
+This documentation provides a comprehensive guide on implementing GitLab Runner autoscaling using Amazon Web Services (AWS) Elastic Compute Cloud (EC2) instances. GitLab Runner autoscaling optimizes resource utilization and reduces costs by dynamically provisioning and terminating EC2 instances based on the workload. This guide covers the setup, configuration, and best practices for achieving efficient and flexible GitLab CI/CD pipelines through autoscaling with AWS EC2 instances.
