@@ -74,7 +74,7 @@ For environment setup
 
 ### Step 2: Choose AWS EC2 as the Executor
 
-To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine.
+To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine. f
 
 ### Step 3: Define Autoscaling Strategy
 
