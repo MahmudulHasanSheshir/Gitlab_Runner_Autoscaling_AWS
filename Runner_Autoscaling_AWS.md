@@ -32,26 +32,53 @@ For the project, a private GitLab server has been established. The GitLab server
 
 ## AWS IAM user configuration
 
-To spin up new runner instances in AWS an IAM user access is need to GitLab server. In order to do that an IAM user is created  
+To spin up new runner instances in AWS an IAM user access is needed to the GitLab server. In order to do that an IAM user is created in AWS IAM service with the name "user-gitlab". 
+![](IAM.PNG)
+After creating the IAM user now we have to give the required access permissions to the user in order to create EC2 instances in AWS console. As AWS has already created some policies for the ease of work, we'll choose the necessary policies from the "Attach necessary policies"
+![](IAM1.PNG)
+To perform the autoscaling and caching operation full access to AWS EC2 and S3 bucket is essential.
+![](IAM2.PNG)
+
+After providing the required access to the IAM user now we need to specify the user credentials for secure operations. In order to create user access credentials we have to follow the given instructions:
+IAM > User > USer_name > Security_Credentials > Create_Access_Key
+![](IAM3.PNG)
+As we will be only using this user account to create and terminate instances we don't have to give it console access. Accessing the AWS command line interface would be perfect for the user.
+![](IAM4.PNG)
+Now, access credentials are generated and provided in a `.csv` file, we have to store it securely for future.
+![](IAM5.PNG)
+
 ## Setting Up GitLab Runner Autoscaling
 
 Configuring GitLab Runner to enable autoscaling involves several steps:
 
-1. Install and configure GitLab Runner on your system.
-2. Choose AWS EC2 as the executor for autoscaling.
-3. Define the autoscaling strategy and parameters.
-
 ### Step 1: Install and Configure GitLab Runner
 
-Install GitLab Runner on your machine and configure it with your GitLab account credentials.
+GitLab runner is installed using the official documentation of GitLab. [Click here](https://docs.gitlab.com/runner/install/linux-repository.html) for the installation guide. To meet the requirement of autoscaling runner we have to install another package named "GitLab Multi-runner". After installing the runner the below command is executed to set the path of the package to source.
+
+```
+cat <<EOF | sudo tee /etc/apt/preferences.d/pin-gitlab-runner.pref
+Explanation: Prefer GitLab provided packages over the Debian native ones
+Package: gitlab-runner
+Pin: origin packages.gitlab.com
+Pin-Priority: 1001
+EOF
+```
+After souring the path the machine is updated to install the latest package of gitlab multi-runner.
+```
+sudo apt-get update
+sudo apt-get install gitlab-runner
+```
+Now download Docker machine in the runner machine which will allow the runner to install docker and necessary tooks to create docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker machine.
+
+For environment setup 
 
 ### Step 2: Choose AWS EC2 as the Executor
 
-In your GitLab Runner configuration file (`config.toml`), set the executor to `docker+machine` to enable autoscaling using Docker Machine.
+To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine.
 
 ### Step 3: Define Autoscaling Strategy
 
-Configure the autoscaling strategy based on your project's requirements. Set thresholds for scaling up or down and specify the instance types to use.
+The autoscaling strategy is configured based on our project's requirements. We set thresholds for scaling up or down and specified the instance types to use.
 
-By following these steps, you'll have GitLab Runner autoscaling with AWS EC2 instances up and running, ready to optimize your CI/CD pipelines dynamically.
+By following these steps, we have configured GitLab Runner autoscaling with AWS EC2 instances up and running, ready to optimize our CI/CD pipelines dynamically.
 
