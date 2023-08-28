@@ -68,13 +68,11 @@ After souring the path the machine is updated to install the latest package of g
 sudo apt-get update
 sudo apt-get install gitlab-runner
 ```
-Now download Docker machine in the runner machine which will allow the runner to install docker and necessary tooks to create docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker machine.
-
-For environment setup 
+Now download Docker machine in the runner machine which will allow the runner to install docker and necessary tooks to create docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker machine. Lastly setup [docker](https://docs.docker.com/engine/install/ubuntu/) to the runner machine.
 
 ### Step 2: Choose AWS EC2 as the Executor
 
-To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine. f
+To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine. 
 
 ### Step 3: Define Autoscaling Strategy
 
