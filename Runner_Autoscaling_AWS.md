@@ -136,8 +136,8 @@ This configuration is essential for the GitLab Runner to know where and how to s
 `MaxUploadedArchiveSize = 0`: This line sets the maximum size of uploaded archives to 0, which means there is no limit
 `[runners.cache.s3]`: This line signifies the start of the configuration for the S3 settings
 `ServerAddress = "s3.amazonaws.com"`: This line sets the server address of the S3 bucket to "s3.amazonaws.com"
-`AccessKey = "AKIAYMSEIBNVDGVTIO5P"`: This line sets the access key for the S3 bucket
-`SecretKey = "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"`: This line sets the secret key for the S3 bucket 
+`AccessKey = "***"`: This line sets the access key for the S3 bucket
+`SecretKey = "***"`: This line sets the secret key for the S3 bucket 
 `BucketName = "sheshir001"`: This line sets the name of the S3 bucket to "sheshir001"
 `BucketLocation = "us-east-1"`: This line sets the location of the S3 bucket to "us-east-1"
 
@@ -151,8 +151,8 @@ This configuration is essential for the GitLab Runner to know where and how to s
     MachineDriver = "amazonec2"
     MachineName = "runner-%s"
     MachineOptions = [
-"amazonec2-access-key=AKIAYMSEIBNVDGVTIO5P",
-"amazonec2-secret-key=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",
+"amazonec2-access-key=***",
+"amazonec2-secret-key=***",
 "amazonec2-region=us-east-1",
 "amazonec2-vpc-id=vpc-03780aad03ecead68",
 "amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0",
