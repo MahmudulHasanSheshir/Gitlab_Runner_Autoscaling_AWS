@@ -230,3 +230,19 @@ check_interval = 0
     MachineName = "runner-%s"
     MachineOptions = ["amazonec2-access-key=***", "amazonec2-secret-key=***F", "amazonec2-region=us-east-1", "amazonec2-vpc-id=vpc-03780aad03ecead68", "amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0", "amazonec2-zone=a", "amazonec2-use-private-address=false", "amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true", "amazonec2-security-group=sheshir-security", "amazonec2-instance-type=t2.small"]
 ```
+
+## Notes
+Notes:
+
+Under MachineOptions you can add anything that the AWS Docker Machine driver
+supports. You are highly
+encouraged to read Docker's docs as your infrastructure setup may warrant
+different options to be applied.
+The child instances will use by default Ubuntu 16.04 unless you choose a
+different AMI ID by setting amazonec2-ami. Set only supported
+base operating systems for Docker Machine.
+If you specify amazonec2-private-address-only=true as one of the machine
+options, your EC2 instance won't get assigned a public IP. This is ok if your
+VPC is configured correctly with an Internet Gateway (IGW) and routing is fine,
+but it’s something to consider if you've got a more complex configuration. Read
+more in [Docker docs about VPC connectivity.](https://docs.docker.com/machine/drivers/aws/#vpc-connectivity)
