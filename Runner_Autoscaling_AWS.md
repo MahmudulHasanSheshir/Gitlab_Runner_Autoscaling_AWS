@@ -73,30 +73,30 @@ Now download Docker machine in the runner machine which will allow the runner to
 ### Step 2: Choose AWS EC2 as the Executor
 
 To register the GitLab runner to the project we used the generated registration token by the gitlab server.
-`Gitlab project > Settings(Left side navigation) > CICD > RUNNERS > New Project Runner.`
+`Gitlab project > Settings(Left side navigation) > CICD > RUNNERS > New Project Runner.`<br>
 
 Clicking on the `New Project Runner` will prompt a new window with instructions given how to register a runner to the project along with the registration token.
-![](gitlab_runner_registration.PNG)
+![](gitlab_runner_registration.PNG)<br>
 
 Following the given instructions  we will be able to register a runner. However, while specifying the executor we have selected `docker+machine`. Because it will work as a docker machine which will handle all the containerization operations in the target servers. 
 
 ### Step 3: Define Autoscaling Strategy
 In this section we will be discussing how the runner is configured to execute the auto scaling operation. 
-The autoscaling strategy is configured based on our project's requirements. We set thresholds for scaling up or down and specified the instance types to use.
+The autoscaling strategy is configured based on our project's requirements. We set thresholds for scaling up or down and specified the instance types to use.<br>
 
 By following these steps, we have configured GitLab Runner autoscaling with AWS EC2 instances up and running, ready to optimize our CI/CD pipelines dynamically.
 At first, we opened the gitlab runner configuration file which is located at `/etc/gitlab-runner/config.toml`
 
-** Global Configuration **
+**Global Configuration**
 ```
 concurrent = 1
 check_interval = 1
 ```
-It is said to be the global section of the runner configuration. 
-`concurrent`: It defines the limit of the jobs that can one runner can run concurrently or parallely. In our case we have set the limit to 1 so that one runner instance can run only 1 job concurrently.
+It is said to be the global section of the runner configuration. <br>
+`concurrent`: It defines the limit of the jobs that can one runner can run concurrently or parallely. In our case we have set the limit to 1 so that one runner instance can run only 1 job concurrently.<br>
 `check_interval`: It sets the time interval of the runner to check for new job in the gitlab server. We have set the interval of checking for job to 1 sec.
 
-** Runner Configuration **
+**Runner Configuration**
 ```
 [[runners]]
   name = "docker-machine"
@@ -108,15 +108,15 @@ It is said to be the global section of the runner configuration.
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker+machine"
 ```
-It is the most crucial part of the configuration where the executor is defined 
-`name = docker-machine`: We set the name of the runner to 'docker-machine'
-`limit = 10`: We set the max limit of the runner machines to spinup based on the maximum workload.
-`url = "https://gitlab.com/"`: It is the base url of the gitlab server that we are using for our project.
-`id = 271545`: It is the id of the runner which is auto generated.
-`token`: It is the gitlab runner registratoin token that is generated in the server console and discussed in the previous step(2).
-`executor = docker+machine`: It is the executor of the runner which also discussed in the previous section.
+It is the most crucial part of the configuration where the executor is defined <br>
+`name = docker-machine`: We set the name of the runner to 'docker-machine'<br>
+`limit = 10`: We set the max limit of the runner machines to spinup based on the maximum workload.<br>
+`url = "https://gitlab.com/"`: It is the base url of the gitlab server that we are using for our project.<br>
+`id = 271545`: It is the id of the runner which is auto generated.<br>
+`token`: It is the gitlab runner registratoin token that is generated in the server console and discussed in the previous step(2).<br>
+`executor = docker+machine`: It is the executor of the runner which also discussed in the previous section.<br>
 
-** `runners.docker` configuration **
+**`runners.docker` configuration**
 ```
  [runners.cache]
     Type = "s3"
@@ -129,19 +129,19 @@ It is the most crucial part of the configuration where the executor is defined
       BucketName = "sheshir001"
       BucketLocation = "us-east-1"
 ```
-This configuration is essential for the GitLab Runner to know where and how to store and retrieve cache data. Using S3 for caching can be beneficial for distributed systems where runners may not have access to a local filesystem, or for persisting cache data across runner restarts
-`[runners.cache]`: This line signifies the start of the configuration for the runner's cache settings.
-`Type = "s3"`: This line sets the type of cache to S3. This means that the runner will use an S3-compatible storage for caching.
-`Shared = true`: This line enables the cache to be shared among all runners. This is useful when different runners need to access the same cached data
-`MaxUploadedArchiveSize = 0`: This line sets the maximum size of uploaded archives to 0, which means there is no limit
-`[runners.cache.s3]`: This line signifies the start of the configuration for the S3 settings
-`ServerAddress = "s3.amazonaws.com"`: This line sets the server address of the S3 bucket to "s3.amazonaws.com"
-`AccessKey = "***"`: This line sets the access key for the S3 bucket
-`SecretKey = "***"`: This line sets the secret key for the S3 bucket 
-`BucketName = "sheshir001"`: This line sets the name of the S3 bucket to "sheshir001"
-`BucketLocation = "us-east-1"`: This line sets the location of the S3 bucket to "us-east-1"
+This configuration is essential for the GitLab Runner to know where and how to store and retrieve cache data. Using S3 for caching can be beneficial for distributed systems where runners may not have access to a local filesystem, or for persisting cache data across runners <br>
+`[runners.cache]`: This line signifies the start of the configuration for the runner's cache settings.<br>
+`Type = "s3"`: This line sets the type of cache to S3. This means that the runner will use an S3-compatible storage for caching.<br>
+`Shared = true`: This line enables the cache to be shared among all runners. This is useful when different runners need to access the same cached data<br>
+`MaxUploadedArchiveSize = 0`: This line sets the maximum size of uploaded archives to 0, which means there is no limit<br>
+`[runners.cache.s3]`: This line signifies the start of the configuration for the S3 settings<br>
+`ServerAddress = "s3.amazonaws.com"`: This line sets the server address of the S3 bucket to "s3.amazonaws.com"<br>
+`AccessKey = "***"`: This line sets the access key for the S3 bucket<br>
+`SecretKey = "***"`: This line sets the secret key for the S3 bucket <br>
+`BucketName = "sheshir001"`: This line sets the name of the S3 bucket to "sheshir001"<br>
+`BucketLocation = "us-east-1"`: This line sets the location of the S3 bucket to "us-east-1"<br>
 
-** [runners.machine] configuration **
+**[runners.machine] configuration**
 ```
  [runners.machine]
     IdleCount = 2
@@ -162,25 +162,25 @@ This configuration is essential for the GitLab Runner to know where and how to s
 "amazonec2-security-group=sheshir-security",
 "amazonec2-instance-type=t2.small"]
 ```
-This configuration is important for defining how the GitLab Runner manages machines for running jobs. The settings can be adjusted based on the specific requirements of the tasks that the runner will be performing.
-`[runners.machine]`: This line signifies the start of the configuration for the runner's machine settings.
-`IdleCount = 2`: This line sets the number of idle machines that the runner should maintain. This can help to reduce the time it takes to start new jobs, as there are already machines available
-`IdleScaleFactor = 1.2`: This line sets the scale factor for idle machines. The runner will try to maintain the number of idle machines as a factor of the number of machines currently in use
-`IdleCountMin = 2`: This line sets the minimum number of idle machines that should be maintained, regardless of what the IdleScaleFactor evaluates.
-`MaxBuilds = 15`: This line sets the maximum number of builds that each machine can handle. After a machine has handled this number of builds, it will be removed
-`MachineDriver = "amazonec2"`: This line sets the machine driver to Amazon EC2. This means that the runner will create and manage Amazon EC2 instances.
-`MachineName = "runner-%s"`: This line sets the name of the machine. The '%s' is a placeholder that will be replaced with a unique identifier for each machine.
-`MachineOptions = [...]`: This line sets a list of options for the machine. These options include the access key and secret key for the Amazon EC2 instances, the region, the VPC ID, the subnet ID, the availability zone, whether to use a private address, the tags for the instances, the security group, and the instance type.
-`"amazonec2-access-key=***"`: This line sets the access key for the Amazon EC2 instances. This key is used to authenticate with the Amazon EC2 service
-`"amazonec2-secret-key=***"`: This line sets the secret key for the Amazon EC2 instances. This key is used along with the access key to authenticate with the Amazon EC2 service
-`"amazonec2-region=us-east-1"`: This line sets the region where the Amazon EC2 instances will be created
-`"amazonec2-vpc-id=vpc-03780aad03ecead68"`: This line sets the VPC (Virtual Private Cloud) ID for the Amazon EC2 instances. The instances will be created within this VPC.
-`"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0"`: This line sets the subnet ID for the Amazon EC2 instances. The instances will be created within this subnet\. Be aware that if the subnet should be public if the gitlab server is publicly hosted or the target machines are not in the same VPC.
-`"amazonec2-zone=a"`: This line sets the availability zone for the Amazon EC2 instances. The instances will be created within this zone
-`"amazonec2-use-private-address=false"`: This line sets whether to use a private address for the Amazon EC2 instances. If set to true, the instances won't have a public IP address.
-`"amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true"`: This line sets the tags for the Amazon EC2 instances. These tags can be used for identification and grouping of instances
-`"amazonec2-security-group=sheshir-security"`: This line sets the security group for the Amazon EC2 instances. This defines the rules for inbound and outbound traffic to the instances.
-We have to set the security group name in this field not the ID.
+This configuration is important for defining how the GitLab Runner manages machines for running jobs. The settings can be adjusted based on the specific requirements of the tasks that the runner will be performing.<br>
+`[runners.machine]`: This line signifies the start of the configuration for the runner's machine settings.<br>
+`IdleCount = 2`: This line sets the number of idle machines that the runner should maintain. This can help to reduce the time it takes to start new jobs, as there are already machines available<br>
+`IdleScaleFactor = 1.2`: This line sets the scale factor for idle machines. The runner will try to maintain the number of idle machines as a factor of the number of machines currently in use <br>
+`IdleCountMin = 2`: This line sets the minimum number of idle machines that should be maintained, regardless of what the IdleScaleFactor evaluates. <br>
+`MaxBuilds = 15`: This line sets the maximum number of builds that each machine can handle. After a machine has handled this number of builds, it will be removed<br>
+`MachineDriver = "amazonec2"`: This line sets the machine driver to Amazon EC2. This means that the runner will create and manage Amazon EC2 instances.<br>
+`MachineName = "runner-%s"`: This line sets the name of the machine. The '%s' is a placeholder that will be replaced with a unique identifier for each machine.<br>
+`MachineOptions = [...]`: This line sets a list of options for the machine. These options include the access key and secret key for the Amazon EC2 instances, the region, the VPC ID, the subnet ID, the availability zone, whether to use a private address, the tags for the instances, the security group, and the instance type.<br>
+`"amazonec2-access-key=***"`: This line sets the access key for the Amazon EC2 instances. This key is used to authenticate with the Amazon EC2 service <br>
+`"amazonec2-secret-key=***"`: This line sets the secret key for the Amazon EC2 instances. This key is used along with the access key to authenticate with the Amazon EC2 service <br>
+`"amazonec2-region=us-east-1"`: This line sets the region where the Amazon EC2 instances will be created<br>
+`"amazonec2-vpc-id=vpc-03780aad03ecead68"`: This line sets the VPC (Virtual Private Cloud) ID for the Amazon EC2 instances. The instances will be created within this VPC.<br>
+`"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0"`: This line sets the subnet ID for the Amazon EC2 instances. The instances will be created within this subnet\. Be aware that if the subnet should be public if the gitlab server is publicly hosted or the target machines are not in the same VPC.<br>
+`"amazonec2-zone=a"`: This line sets the availability zone for the Amazon EC2 instances. The instances will be created within this zone<br>
+`"amazonec2-use-private-address=false"`: This line sets whether to use a private address for the Amazon EC2 instances. If set to true, the instances won't have a public IP address.<br>
+`"amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true"`: This line sets the tags for the Amazon EC2 instances. These tags can be used for identification and grouping of instances<br>
+`"amazonec2-security-group=sheshir-security"`: This line sets the security group for the Amazon EC2 instances. This defines the rules for inbound and outbound traffic to the instances.<br>
+We have to set the security group name in this field not the ID.<br>
 `"amazonec2-instance-type=t2.small"`: This line sets the instance type for the Amazon EC2 instances. This defines the hardware of the host computer for the instances
 
 ## Full configured Runner 
