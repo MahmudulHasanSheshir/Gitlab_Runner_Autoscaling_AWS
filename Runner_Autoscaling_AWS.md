@@ -162,4 +162,71 @@ This configuration is essential for the GitLab Runner to know where and how to s
 "amazonec2-security-group=sheshir-security",
 "amazonec2-instance-type=t2.small"]
 ```
-This configuration is important for defining how the GitLab Runner manages machines for running jobs. The settings can be adjusted based on the specific requirements of the tasks that the runner will be performing
+This configuration is important for defining how the GitLab Runner manages machines for running jobs. The settings can be adjusted based on the specific requirements of the tasks that the runner will be performing.
+`[runners.machine]`: This line signifies the start of the configuration for the runner's machine settings.
+`IdleCount = 2`: This line sets the number of idle machines that the runner should maintain. This can help to reduce the time it takes to start new jobs, as there are already machines available
+`IdleScaleFactor = 1.2`: This line sets the scale factor for idle machines. The runner will try to maintain the number of idle machines as a factor of the number of machines currently in use
+`IdleCountMin = 2`: This line sets the minimum number of idle machines that should be maintained, regardless of what the IdleScaleFactor evaluates.
+`MaxBuilds = 15`: This line sets the maximum number of builds that each machine can handle. After a machine has handled this number of builds, it will be removed
+`MachineDriver = "amazonec2"`: This line sets the machine driver to Amazon EC2. This means that the runner will create and manage Amazon EC2 instances.
+`MachineName = "runner-%s"`: This line sets the name of the machine. The '%s' is a placeholder that will be replaced with a unique identifier for each machine.
+`MachineOptions = [...]`: This line sets a list of options for the machine. These options include the access key and secret key for the Amazon EC2 instances, the region, the VPC ID, the subnet ID, the availability zone, whether to use a private address, the tags for the instances, the security group, and the instance type.
+`"amazonec2-access-key=***"`: This line sets the access key for the Amazon EC2 instances. This key is used to authenticate with the Amazon EC2 service
+`"amazonec2-secret-key=***"`: This line sets the secret key for the Amazon EC2 instances. This key is used along with the access key to authenticate with the Amazon EC2 service
+`"amazonec2-region=us-east-1"`: This line sets the region where the Amazon EC2 instances will be created
+`"amazonec2-vpc-id=vpc-03780aad03ecead68"`: This line sets the VPC (Virtual Private Cloud) ID for the Amazon EC2 instances. The instances will be created within this VPC.
+`"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0"`: This line sets the subnet ID for the Amazon EC2 instances. The instances will be created within this subnet\. Be aware that if the subnet should be public if the gitlab server is publicly hosted or the target machines are not in the same VPC.
+`"amazonec2-zone=a"`: This line sets the availability zone for the Amazon EC2 instances. The instances will be created within this zone
+`"amazonec2-use-private-address=false"`: This line sets whether to use a private address for the Amazon EC2 instances. If set to true, the instances won't have a public IP address.
+`"amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true"`: This line sets the tags for the Amazon EC2 instances. These tags can be used for identification and grouping of instances
+`"amazonec2-security-group=sheshir-security"`: This line sets the security group for the Amazon EC2 instances. This defines the rules for inbound and outbound traffic to the instances.
+We have to set the security group name in this field not the ID.
+`"amazonec2-instance-type=t2.small"`: This line sets the instance type for the Amazon EC2 instances. This defines the hardware of the host computer for the instances
+
+## Full configured Runner 
+
+```
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "docker-machine"
+  limit = 10
+  url = "https://gitlab.com/"
+  id = 27196664
+  token = "glrt--ztwCtySr2wKxLdoY9kz"
+  token_obtained_at = 2023-08-24T04:59:29Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker+machine"
+  [runners.docker]
+    tls_verify = false
+    image = "alpine"
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = true
+    volumes = ["/cache"]
+    shm_size = 0
+
+  [runners.cache]
+    Type = "s3"
+    Shared = true
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+      ServerAddress = "s3.amazonaws.com"
+      AccessKey = "***"
+      SecretKey = "***"
+      BucketName = "sheshir001"
+      BucketLocation = "us-east-1"
+  [runners.machine]
+    IdleCount = 2
+    IdleScaleFactor = 1.2
+    IdleCountMin = 0
+    MaxBuilds = 10
+    MachineDriver = "amazonec2"
+    MachineName = "runner-%s"
+    MachineOptions = ["amazonec2-access-key=***", "amazonec2-secret-key=***F", "amazonec2-region=us-east-1", "amazonec2-vpc-id=vpc-03780aad03ecead68", "amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0", "amazonec2-zone=a", "amazonec2-use-private-address=false", "amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true", "amazonec2-security-group=sheshir-security", "amazonec2-instance-type=t2.small"]
+```
