@@ -72,11 +72,94 @@ Now download Docker machine in the runner machine which will allow the runner to
 
 ### Step 2: Choose AWS EC2 as the Executor
 
-To register the GitLab runner to the project we used the generated registration token by the gitlab server. In our GitLab Runner configuration file `/etc/gitlab/config.toml`, the executor is set to `docker+machine` to enable autoscaling using Docker Machine. 
+To register the GitLab runner to the project we used the generated registration token by the gitlab server.
+`Gitlab project > Settings(Left side navigation) > CICD > RUNNERS > New Project Runner.`
+
+Clicking on the `New Project Runner` will prompt a new window with instructions given how to register a runner to the project along with the registration token.
+![](gitlab_runner_registration.PNG)
+
+Following the given instructions  we will be able to register a runner. However, while specifying the executor we have selected `docker+machine`. Because it will work as a docker machine which will handle all the containerization operations in the target servers. 
 
 ### Step 3: Define Autoscaling Strategy
-
+In this section we will be discussing how the runner is configured to execute the auto scaling operation. 
 The autoscaling strategy is configured based on our project's requirements. We set thresholds for scaling up or down and specified the instance types to use.
 
 By following these steps, we have configured GitLab Runner autoscaling with AWS EC2 instances up and running, ready to optimize our CI/CD pipelines dynamically.
+At first, we opened the gitlab runner configuration file which is located at `/etc/gitlab-runner/config.toml`
 
+** Global Configuration **
+```
+concurrent = 1
+check_interval = 1
+```
+It is said to be the global section of the runner configuration. 
+`concurrent`: It defines the limit of the jobs that can one runner can run concurrently or parallely. In our case we have set the limit to 1 so that one runner instance can run only 1 job concurrently.
+`check_interval`: It sets the time interval of the runner to check for new job in the gitlab server. We have set the interval of checking for job to 1 sec.
+
+** Runner Configuration **
+```
+[[runners]]
+  name = "docker-machine"
+  limit = 10
+  url = "https://gitlab.com/"
+  id = 27196664
+  token = "*******"
+  token_obtained_at = 2023-08-24T04:59:29Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker+machine"
+```
+It is the most crucial part of the configuration where the executor is defined 
+`name = docker-machine`: We set the name of the runner to 'docker-machine'
+`limit = 10`: We set the max limit of the runner machines to spinup based on the maximum workload.
+`url = "https://gitlab.com/"`: It is the base url of the gitlab server that we are using for our project.
+`id = 271545`: It is the id of the runner which is auto generated.
+`token`: It is the gitlab runner registratoin token that is generated in the server console and discussed in the previous step(2).
+`executor = docker+machine`: It is the executor of the runner which also discussed in the previous section.
+
+** `runners.docker` configuration **
+```
+ [runners.cache]
+    Type = "s3"
+    Shared = true
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+      ServerAddress = "s3.amazonaws.com"
+      AccessKey = "AKIAYMSEIBNVDGVTIO5P"
+      SecretKey = "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"
+      BucketName = "sheshir001"
+      BucketLocation = "us-east-1"
+```
+This configuration is essential for the GitLab Runner to know where and how to store and retrieve cache data. Using S3 for caching can be beneficial for distributed systems where runners may not have access to a local filesystem, or for persisting cache data across runner restarts
+`[runners.cache]`: This line signifies the start of the configuration for the runner's cache settings.
+`Type = "s3"`: This line sets the type of cache to S3. This means that the runner will use an S3-compatible storage for caching.
+`Shared = true`: This line enables the cache to be shared among all runners. This is useful when different runners need to access the same cached data
+`MaxUploadedArchiveSize = 0`: This line sets the maximum size of uploaded archives to 0, which means there is no limit
+`[runners.cache.s3]`: This line signifies the start of the configuration for the S3 settings
+`ServerAddress = "s3.amazonaws.com"`: This line sets the server address of the S3 bucket to "s3.amazonaws.com"
+`AccessKey = "AKIAYMSEIBNVDGVTIO5P"`: This line sets the access key for the S3 bucket
+`SecretKey = "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"`: This line sets the secret key for the S3 bucket 
+`BucketName = "sheshir001"`: This line sets the name of the S3 bucket to "sheshir001"
+`BucketLocation = "us-east-1"`: This line sets the location of the S3 bucket to "us-east-1"
+
+** [runners.machine] configuration **
+```
+ [runners.machine]
+    IdleCount = 2
+    IdleScaleFactor = 1.2
+    IdleCountMin = 0
+    MaxBuilds = 10
+    MachineDriver = "amazonec2"
+    MachineName = "runner-%s"
+    MachineOptions = [
+"amazonec2-access-key=AKIAYMSEIBNVDGVTIO5P",
+"amazonec2-secret-key=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",
+"amazonec2-region=us-east-1",
+"amazonec2-vpc-id=vpc-03780aad03ecead68",
+"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0",
+"amazonec2-zone=a",
+"amazonec2-use-private-address=false",
+"amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true",
+"amazonec2-security-group=sheshir-security",
+"amazonec2-instance-type=t2.small"]
+```
+This configuration is important for defining how the GitLab Runner manages machines for running jobs. The settings can be adjusted based on the specific requirements of the tasks that the runner will be performing
