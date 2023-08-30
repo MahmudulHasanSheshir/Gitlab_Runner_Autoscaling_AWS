@@ -124,8 +124,8 @@ It is the most crucial part of the configuration where the executor is defined <
     MaxUploadedArchiveSize = 0
     [runners.cache.s3]
       ServerAddress = "s3.amazonaws.com"
-      AccessKey = "AKIAYMSEIBNVDGVTIO5P"
-      SecretKey = "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"
+      AccessKey = "***"
+      SecretKey = "***"
       BucketName = "sheshir001"
       BucketLocation = "us-east-1"
 ```
