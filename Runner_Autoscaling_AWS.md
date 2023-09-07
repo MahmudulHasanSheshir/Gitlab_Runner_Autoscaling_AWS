@@ -70,7 +70,7 @@ sudo apt-get install gitlab-runner
 ```
 Now download the Docker machine in the runner machine which will allow the runner to install docker and the necessary tools to create a docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker-machine. Lastly setup [docker](https://docs.docker.com/engine/install/ubuntu/) to the runner machine.
 
-### Step 2: Choose AWS EC2 as the Executor
+### Step 2: Choose required the Executor
 
 To register the GitLab runner to the project we used the generated registration token by the GitLab server.
 `Gitlab project > Settings(Left side navigation) > CICD > RUNNERS > New Project Runner.`<br> 
@@ -89,11 +89,11 @@ At first, we opened the GitLab runner configuration file which is located at `/e
 
 **Global Configuration**
 ```
-concurrent = 1
+concurrent = 10
 check_interval = 1
 ```
 It is said to be the global section of the runner configuration. <br>
-`concurrent`: It defines the limit of the jobs that one runner can run concurrently or parallelly. In our case, we have set the limit to 1 so that one runner instance can run only 1 job concurrently.<br>
+`concurrent`: Limits how many jobs can run concurrently, across all registered runners. It can run the number of jobs concurrently or parallelly in maximum number of runner machines. In our case, we have set the limit to 10 so that maximum number of runner instances can run only 10 job concurrently.<br>
 `check_interval`: It sets the time interval of the runner to check for a new job in the GitLab server. We have set the interval of checking for a job to 1 sec.
 
 **Runner Configuration**
