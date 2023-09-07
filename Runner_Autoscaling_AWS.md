@@ -18,7 +18,7 @@ GitLab Runner, a key component of GitLab's CI/CD toolset, executes tasks defined
 
 ## Prerequisites
 
-To implement GitLab Runner autoscaling using AWS EC2, you'll need:
+To implement GitLab Runner autoscaling using AWS EC2, you'll need :
 
 - A GitLab account for CI/CD management.
 - An AWS account to leverage EC2 resources.
@@ -32,14 +32,14 @@ For the project, a private GitLab server has been established. The GitLab server
 
 ## AWS IAM user configuration
 
-To spin up new runner instances in AWS an IAM user access is needed to the GitLab server. In order to do that an IAM user is created in AWS IAM service with the name "user-gitlab". 
+IAM user access is needed to the GitLab server to spin up new runner instances in AWS. In order to do that an IAM user is created in AWS IAM service with the name "user-gitlab". 
 ![](IAM.PNG)
 After creating the IAM user now we have to give the required access permissions to the user in order to create EC2 instances in AWS console. As AWS has already created some policies for the ease of work, we'll choose the necessary policies from the "Attach necessary policies"
 ![](IAM1.PNG)
 To perform the autoscaling and caching operation full access to AWS EC2 and S3 bucket is essential.
 ![](IAM2.PNG)
 
-After providing the required access to the IAM user now we need to specify the user credentials for secure operations. In order to create user access credentials we have to follow the given instructions:
+After providing the required access to the IAM user we need to specify the user credentials for secure operations. In order to create user access credentials we have to follow the given instructions:
 IAM > User > USer_name > Security_Credentials > Create_Access_Key
 ![](IAM3.PNG)
 As we will be only using this user account to create and terminate instances we don't have to give it console access. Accessing the AWS command line interface would be perfect for the user.
@@ -68,24 +68,24 @@ After souring the path the machine is updated to install the latest package of g
 sudo apt-get update
 sudo apt-get install gitlab-runner
 ```
-Now download Docker machine in the runner machine which will allow the runner to install docker and necessary tooks to create docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker machine. Lastly setup [docker](https://docs.docker.com/engine/install/ubuntu/) to the runner machine.
+Now download the Docker machine in the runner machine which will allow the runner to install docker and the necessary tools to create a docker environment in target machines. [Click here](https://docs.docker.com/machine/install-machine/) to install docker-machine. Lastly setup [docker](https://docs.docker.com/engine/install/ubuntu/) to the runner machine.
 
 ### Step 2: Choose AWS EC2 as the Executor
 
-To register the GitLab runner to the project we used the generated registration token by the gitlab server.
+To register the GitLab runner to the project we used the generated registration token by the GitLab server.
 `Gitlab project > Settings(Left side navigation) > CICD > RUNNERS > New Project Runner.`<br>
 
 Clicking on the `New Project Runner` will prompt a new window with instructions given how to register a runner to the project along with the registration token.
 ![](gitlab_runner_registration.PNG)<br>
 
-Following the given instructions  we will be able to register a runner. However, while specifying the executor we have selected `docker+machine`. Because it will work as a docker machine which will handle all the containerization operations in the target servers. 
+Following the given instructions  we will be able to register a runner. However, while specifying the executor we have selected `docker+machine`. Because it will work as a docker-machine that will handle all the containerization operations in the target servers. 
 
-### Step 3: Define Autoscaling Strategy
-In this section we will be discussing how the runner is configured to execute the auto scaling operation. 
+### Step 3: Define the Autoscaling Strategy
+In this section, we will be discussing how the runner is configured to execute the auto scaling operation. 
 The autoscaling strategy is configured based on our project's requirements. We set thresholds for scaling up or down and specified the instance types to use.<br>
 
 By following these steps, we have configured GitLab Runner autoscaling with AWS EC2 instances up and running, ready to optimize our CI/CD pipelines dynamically.
-At first, we opened the gitlab runner configuration file which is located at `/etc/gitlab-runner/config.toml`
+At first, we opened the GitLab runner configuration file which is located at `/etc/gitlab-runner/config.toml`
 
 **Global Configuration**
 ```
@@ -93,8 +93,8 @@ concurrent = 1
 check_interval = 1
 ```
 It is said to be the global section of the runner configuration. <br>
-`concurrent`: It defines the limit of the jobs that can one runner can run concurrently or parallely. In our case we have set the limit to 1 so that one runner instance can run only 1 job concurrently.<br>
-`check_interval`: It sets the time interval of the runner to check for new job in the gitlab server. We have set the interval of checking for job to 1 sec.
+`concurrent`: It defines the limit of the jobs that one runner can run concurrently or parallelly. In our case, we have set the limit to 1 so that one runner instance can run only 1 job concurrently.<br>
+`check_interval`: It sets the time interval of the runner to check for a new job in the GitLab server. We have set the interval of checking for a job to 1 sec.
 
 **Runner Configuration**
 ```
@@ -109,12 +109,12 @@ It is said to be the global section of the runner configuration. <br>
   executor = "docker+machine"
 ```
 It is the most crucial part of the configuration where the executor is defined <br>
-`name = docker-machine`: We set the name of the runner to 'docker-machine'<br>
-`limit = 10`: We set the max limit of the runner machines to spinup based on the maximum workload.<br>
-`url = "https://gitlab.com/"`: It is the base url of the gitlab server that we are using for our project.<br>
-`id = 271545`: It is the id of the runner which is auto generated.<br>
-`token`: It is the gitlab runner registratoin token that is generated in the server console and discussed in the previous step(2).<br>
-`executor = docker+machine`: It is the executor of the runner which also discussed in the previous section.<br>
+`name = docker-machine: We set the name of the runner to 'docker-machine'<br><br>
+`limit = 10`: We set the max limit of the runner machines to spin up based on the maximum workload.<br><br>
+`url = "https://gitlab.com/"`: It is the base URL of the GitLab server that we are using for our project.<br><br>
+`id = 271545`: It is the id of the runner which is auto-generated.<br><br>
+`token`: It is the GitLab runner registration token that is generated in the server console and discussed in the previous step(2).<br><br>
+`executor = docker+machine`: It is the executor of the runner which is also discussed in the previous section.<br><br>
 
 **`runners.docker` configuration**
 ```
@@ -129,7 +129,7 @@ It is the most crucial part of the configuration where the executor is defined <
       BucketName = "sheshir001"
       BucketLocation = "us-east-1"
 ```
-This configuration is essential for the GitLab Runner to know where and how to store and retrieve cache data. Using S3 for caching can be beneficial for distributed systems where runners may not have access to a local filesystem, or for persisting cache data across runners <br>
+This configuration is essential for the GitLab Runner to know where and how to store and retrieve cache data. Using S3 for caching can be beneficial for distributed systems where runners may not have access to a local filesystem or for persisting cache data across runners <br>
 `[runners.cache]`: This line signifies the start of the configuration for the runner's cache settings.<br>
 `Type = "s3"`: This line sets the type of cache to S3. This means that the runner will use an S3-compatible storage for caching.<br>
 `Shared = true`: This line enables the cache to be shared among all runners. This is useful when different runners need to access the same cached data<br>
@@ -175,12 +175,12 @@ This configuration is important for defining how the GitLab Runner manages machi
 `"amazonec2-secret-key=***"`: This line sets the secret key for the Amazon EC2 instances. This key is used along with the access key to authenticate with the Amazon EC2 service <br>
 `"amazonec2-region=us-east-1"`: This line sets the region where the Amazon EC2 instances will be created<br>
 `"amazonec2-vpc-id=vpc-03780aad03ecead68"`: This line sets the VPC (Virtual Private Cloud) ID for the Amazon EC2 instances. The instances will be created within this VPC.<br>
-`"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0"`: This line sets the subnet ID for the Amazon EC2 instances. The instances will be created within this subnet\. Be aware that if the subnet should be public if the gitlab server is publicly hosted or the target machines are not in the same VPC.<br>
+`"amazonec2-subnet-id=subnet-0d2a8dd3dc997ebb0"`: This line sets the subnet ID for the Amazon EC2 instances. The instances will be created within this subnet\. Be aware that if the subnet should be public if the GitLab server is publicly hosted or the target machines are not in the same VPC.<br>
 `"amazonec2-zone=a"`: This line sets the availability zone for the Amazon EC2 instances. The instances will be created within this zone<br>
 `"amazonec2-use-private-address=false"`: This line sets whether to use a private address for the Amazon EC2 instances. If set to true, the instances won't have a public IP address.<br>
 `"amazonec2-tags=runner-manager-name,gitlab-aws-autoscaler,gitlab,true,gitlab-runner-autoscale,true"`: This line sets the tags for the Amazon EC2 instances. These tags can be used for identification and grouping of instances<br>
 `"amazonec2-security-group=sheshir-security"`: This line sets the security group for the Amazon EC2 instances. This defines the rules for inbound and outbound traffic to the instances.<br>
-We have to set the security group name in this field not the ID.<br>
+We have to set the security group name in this field, not the ID.<br>
 `"amazonec2-instance-type=t2.small"`: This line sets the instance type for the Amazon EC2 instances. This defines the hardware of the host computer for the instances
 
 ## Full configured Runner 
