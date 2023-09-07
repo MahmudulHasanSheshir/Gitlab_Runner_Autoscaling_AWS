@@ -108,8 +108,8 @@ It is said to be the global section of the runner configuration. <br>
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker+machine"
 ```
-It is the most crucial part of the configuration where the executor is defined <br>
-`name = docker-machine: We set the name of the runner to 'docker-machine'<br> <br>
+It is the most crucial part of the configuration where the executor is defined <br> <br>
+`name = docker-machine`: We set the name of the runner to 'docker-machine'<br> <br>
 `limit = 10`: We set the max limit of the runner machines to spin up based on the maximum workload.<br> <br>
 `url = "https://gitlab.com/"`: It is the base URL of the GitLab server that we are using for our project.<br> <br>
 `id = 271545`: It is the id of the runner which is auto-generated.<br> <br>
